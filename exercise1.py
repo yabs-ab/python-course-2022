@@ -22,13 +22,13 @@ def pluralize(num: int, singular: str, plural: str | None = None) -> str:
     Uses `plural` if provided, otherwise returns `singular` with "s" appended.
 
     >>> pluralize(1, "apple")
-    "apple"
+    'apple'
 
     >>> pluralize(2, "apple")
-    "apples"
+    'apples'
 
     >>> pluralize(4, "goose", "geese")
-    "geese"
+    'geese'
     """
 
 
@@ -39,7 +39,7 @@ def pig_latin(text: str) -> str:
     to the end and appending "ay", i.e.
 
     >>> pig_latin("pigs go oink")
-    "igspay ogay inkoay"
+    'igspay ogay inkoay'
     """
 
 
@@ -63,7 +63,7 @@ def sorted_by_length_and_alphabetically(strings: list[str]) -> list[str]:
 
     >>> sorted_by_length_and_alphabetically(
     ...     ["this", "is", "a", "weird", "sort", "order"])
-    ["order", "weird", "sort", "this", "is", "a"]
+    ['order', 'weird', 'sort', 'this', 'is', 'a']
     """
 
 
@@ -95,15 +95,15 @@ def parse_index_lines(lines: abc.Iterable[str]) -> list[tuple[str, str]]:
     ...    ["# This is a comment and should be ignored!",
     ...     "name 1|description 1|",
     ...     "name 2|description 2|"])
-    [("name 1", "description 1"), ("name 2", "description 2")]
+    [('name 1', 'description 1'), ('name 2', 'description 2')]
     """
 
 
 def strip_xml_tags(text: str) -> str:
     """Return a version of `text` stripped of xml tags.
 
-    >>> strip_xml_tags("Vi kan <a href="python.org">Python</a>!")
-    "Vi kan Python!"
+    >>> strip_xml_tags('Vi kan <a href="python.org">Python</a>!')
+    'Vi kan Python!'
     """
 
 
