@@ -18,6 +18,7 @@
 #                                                                             #
 #                                                                             #
 ###############################################################################
+
 
 
 
@@ -53,6 +54,8 @@
 # WHAT IS PYTHON
 
 #      - General purpose
+#      - Strongly typed
+#      - Dynamic
 #      - Multi-paradigm
 #      - Powerful
 #      - Approachable
@@ -166,6 +169,7 @@ b = 2 ** 3
 
 # if, elif, else, and, or, not
 
+
 
 
 
@@ -178,10 +182,17 @@ b = 2 ** 3
 
 # int and float
 
+
+a = 1
+b = 1.
 
 
 
+
 # str and bytes
+
+
+s = "hallå"
 
 
 
@@ -275,9 +286,8 @@ heights = {"Burj Khalifa":  829.8,
 
 # Functions: definition
 
-def fun(arg):
-    """Return a message involving `arg`
-    """
+def fun(arg: int) -> str:
+    """Return a message involving `arg` """
     return f"You passed in {arg}"
 
 
@@ -323,6 +333,7 @@ def fun(something):
     def closure():
         return something
 
+    print(locals())
     return closure
 
 
@@ -371,7 +382,20 @@ print(a_list)
 
 colors = ["red", "green", "blue", "yellow"]
 
-
+for color in colors:
+    print(color)
+
+
+for i, color in enumerate(colors):
+    print(i, color)
+
+for color in reversed(colors):
+    print(color)
+    
+i = 0
+while True:
+    print(colors[i])
+    i += 1
 
 
 # Loop backwards?
@@ -407,6 +431,8 @@ for name, height in zip(names, heights):
 
 for i in range(5):
     print(i)
+    if i == 2:
+        break
 else:
     print("Else?")
 
@@ -423,6 +449,7 @@ while True:
 
 
 # Exercises!
+# https://github.com/yabs-ab/python-course-2022/blob/master/exercise1.py
 
 
 
@@ -437,6 +464,12 @@ else:
     print("No exception raised!")
 finally:
     print("This is always run.")
+
+
+try:
+    raise RuntimeError
+finally:
+    some_cleanup_function()
 
 
 
@@ -474,15 +507,14 @@ except Exception as e:
 # then it probably is a duck"
 
 def recursive_sum(numbers):
-    if type(numbers) == int:
-        return numbers
+    result = 0
 
-    if type(numbers) in (list, tuple):
-        result = 0
-
+    try:
         for n in numbers:
             result += recursive_sum(n)
-
+    except TypeError:
+        return numbers
+    else:
         return result
 
 
@@ -519,6 +551,13 @@ def recursive_sum(numbers):
 
 # Opening files!
 
+with open("filename.txt") as f:
+    for line in f:
+        print(line)
+
+
+
+
 
 
 
@@ -537,9 +576,9 @@ def recursive_sum(numbers):
 # Decorators!
 
 def decorator(func):
-    def newfunc():
+    def newfunc(*args, **kwargs):
         print("before!")
-        func()
+        func(*args, **kwargs)
         print("after!")
 
     return newfunc
@@ -681,6 +720,11 @@ class MyContext:
 
     def __exit__(self, *args):
         print("exit", args)
+
+
+with MyContext() as context:
+    ...
+
 
 
 

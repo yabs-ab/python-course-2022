@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 from collections import abc
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import sys
 import time
 from typing import Any, NoReturn
 
@@ -22,6 +24,14 @@ class AbstractShape:
     >>> repr(AbstractShape())
     'AbstractShape()'
     """
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}()"
+
+    @property
+    def area(self) -> float:
+        """Area of shape."""
+        raise NotImplementedError
 
 
 class Rectangle(AbstractShape):
@@ -54,6 +64,25 @@ class Rectangle(AbstractShape):
     True
     """
 
+    def __init__(self, width: float, height: float):
+        super().__init__()
+        self.width = width
+        self.height = height
+
+    def __repr__(self) -> str:
+        return f"Rectangle(width={self.width}, height={self.height})"
+
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, self.__class__)
+            and self.width == other.width
+            and self.height == other.height
+        )
+
+    @property
+    def area(self) -> float:
+        return self.width * self.height
+
 
 class KeyBasedDefaultDict(dict[abc.Hashable, Any]):
     """A version of `collections.defaultdict` with key based factory.
@@ -66,6 +95,21 @@ class KeyBasedDefaultDict(dict[abc.Hashable, Any]):
     (1, 1)
     """
 
+    def __init__(
+        self,
+        *args: list[Any],
+        default: abc.Callable[[abc.Hashable], Any] | None = None,
+        **kwargs: dict[str, Any],
+    ) -> None:
+        super().__init__(*args, **kwargs)
+        self._factory = default
+
+    def __missing__(self, key: abc.Hashable) -> Any:
+        if self._factory is None:
+            return None
+
+        return self._factory(key)
+
 
 class Timer:
     """Timer context.
@@ -77,6 +121,16 @@ class Timer:
     True
     """
 
+    def __init__(self) -> None:
+        self.time: float | None = None
+
+    def __enter__(self) -> None:
+        self.time = time.time()
+
+    def __exit__(self, *_: Any) -> None:
+        assert self.time is not None
+        self.time = time.time() - self.time
+
 
 def serve(html: str, port: int) -> NoReturn:
     """Serve `html` on http://localhost:`port`/
@@ -86,6 +140,23 @@ def serve(html: str, port: int) -> NoReturn:
 
     Hint: look at the http.server module in the standard library.
     """
+    html_msg = html.encode()
+
+    class MyHandler(BaseHTTPRequestHandler):
+        """My custom request handler."""
+
+        def do_GET(self) -> None:  # pylint: disable=invalid-name
+            """Handle GET."""
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.send_header("Content-Length", str(len(html_msg)))
+            self.end_headers()
+            self.wfile.write(html_msg)
+
+    with HTTPServer(("localhost", port), MyHandler) as server:
+        server.serve_forever()
+
+    sys.exit(0)
 
 
 if __name__ == "__main__":
